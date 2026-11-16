@@ -1,0 +1,9 @@
+# Compiled binary
+springer-demo-app
+exe_binary
+
+# Environment and temporary files
+.env
+*.log
+*.bak
+*.tmp
