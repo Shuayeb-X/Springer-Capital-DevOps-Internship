@@ -660,3 +660,463 @@ It complements unit tests by checking issues that might not be caught by the tes
 Running these commands manually is useful, but developers may forget to execute them before pushing code.
 
 By including them in GitHub Actions, every push to `main` automatically triggers the same validation process.
+
+# 9 Dockerizing Springer Demo Go Application
+
+
+
+# Dockerizing Springer Demo Go Application
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/Go%20Application%20Containerization%20Workflow.png)
+
+## 9.1. Creating the Dockerfile
+
+First, I created a file named `dockerfile` in the project root directory.
+
+### Dockerfile Code
+
+```dockerfile
+# Stage 1: Build the Go application
+FROM golang:1.26-alpine AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy project files into the container
+COPY . .
+
+# Build the Go application
+RUN CGO_ENABLED=0 GOOS=linux go build -o exe_binary .
+
+# Stage 2: Create the lightweight runtime image
+FROM alpine:3.22
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the compiled binary from the builder stage
+COPY --from=builder /app/exe_binary .
+
+# Expose application port
+EXPOSE 8080
+
+# Start the application
+CMD ["./exe_binary"]
+```
+
+### Dockerfile Explanation
+
+| Instruction | Explanation |
+|---|---|
+| `FROM golang:1.26-alpine AS builder` | Uses Go Alpine as the build environment. |
+| `WORKDIR /app` | Sets `/app` as the working directory. |
+| `COPY . .` | Copies project files into the builder stage. |
+| `RUN CGO_ENABLED=0 GOOS=linux go build -o exe_binary .` | Compiles the Go application into a Linux executable binary. |
+| `FROM alpine:3.22` | Creates a separate lightweight runtime stage. |
+| `COPY --from=builder /app/exe_binary .` | Copies only the compiled binary from the builder stage. |
+| `EXPOSE 8080` | Documents the application's listening port. |
+| `CMD ["./exe_binary"]` | Starts the application when the container runs. |
+
+### Why Did I Use a Multi-Stage Build?
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/Docker%20and%20GHCR.png)
+
+**Builder Stage:**
+- Uses the Go compiler.
+- Compiles the Go source code.
+- Generates the executable binary.
+
+**Runtime Stage:**
+- Uses a lightweight Alpine Linux image.
+- Copies only the compiled executable.
+- Does not include the Go compiler or source code.
+
+**Benefits:**
+- Reduces the final Docker image size.
+- Keeps the runtime environment lightweight.
+- Separates build dependencies from runtime dependencies.
+- Improves deployment efficiency.
+---
+
+## 9.2. Building the Docker Image
+
+After creating the Dockerfile, I built the Docker image from the project root directory.
+
+### Build Command
+
+```bash
+docker build -t springer-demo-app:v1 -f dockerfile .
+```
+
+### Command Explanation
+
+| Command | Explanation |
+|---|---|
+| `docker build` | Builds a Docker image. |
+| `-t` | Assigns a name and tag to the image. |
+| `springer-demo-app` | Docker image name. |
+| `v1` | Image version tag. |
+| `-f dockerfile` | Specifies the Dockerfile name. |
+| `.` | Specifies the current directory as the build context. |
+
+### Verify the Docker Image
+
+```bash
+docker images
+```
+
+This command lists all locally available Docker images.
+
+---
+
+## 9.3. Running the Docker Container
+
+After building the image, I created and started a Docker container to test the application.
+
+### Run Command
+
+```bash
+docker run -d \
+  --name springer-demo \
+  -p 8080:8080 \
+  springer-demo-app:v1
+```
+
+### Command Explanation
+
+| Option | Explanation |
+|---|---|
+| `docker run` | Creates and starts a container. |
+| `-d` | Runs the container in detached mode. |
+| `--name springer-demo` | Assigns a name to the container. |
+| `-p 8080:8080` | Maps host port 8080 to container port 8080. |
+| `springer-demo-app:v1` | Specifies the Docker image. |
+
+### Verify the Running Container
+
+```bash
+docker ps
+```
+
+To view all containers, including stopped containers:
+
+```bash
+docker ps -a
+```
+
+### Check Container Logs
+
+```bash
+docker logs springer-demo
+```
+
+---
+
+## 9.4. Testing the Application
+
+After starting the container, I tested the application using `curl`.
+
+### Test Application Endpoint
+
+```bash
+curl http://localhost:8080/
+```
+
+### Test Health Endpoint
+
+```bash
+curl http://localhost:8080/health
+```
+
+### Expected Health Response
+
+```json
+{
+  "status": "healthy"
+}
+```
+
+These tests helped verify that the application was accessible through the mapped host port.
+
+---
+
+## 9.5. Docker Hub Authentication
+
+After successfully testing the application locally, I authenticated with Docker Hub.
+
+Docker Hub is a cloud-based registry used to store and distribute Docker images.
+
+### Login Command
+
+```bash
+docker login
+```
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/docker%20login%2Cpush.png)
+
+Alternatively, specify the Docker Hub username:
+
+```bash
+docker login -u shuayeb009
+```
+
+I authenticated using my Docker Hub credentials.
+
+**Security Note:**
+
+- Never store Docker Hub passwords or access tokens inside a Dockerfile.
+- Never commit credentials to GitHub.
+- Use secure authentication methods such as Docker access tokens.
+
+---
+
+## 9.6. Tagging the Docker Image
+
+Before publishing the image, I created a Docker Hub-compatible tag for the locally built image.
+
+### Tag Command
+
+```bash
+docker tag springer-demo-app:v1 \
+  shuayeb009/springer-demo-app:v1
+```
+
+### Command Explanation
+
+| Part | Explanation |
+|---|---|
+| `docker tag` | Creates another tag for an existing image. |
+| `springer-demo-app:v1` | Existing local image. |
+| `shuayeb009` | Docker Hub username. |
+| `springer-demo-app` | Docker Hub repository name. |
+| `v1` | Image version tag. |
+
+### Why Is Tagging Required?
+
+Docker Hub uses the following image naming convention:
+
+```text
+USERNAME/REPOSITORY:TAG
+```
+
+Therefore, I tagged the local image with my Docker Hub username and repository name before publishing it.
+
+The final image name became:
+
+```text
+shuayeb009/springer-demo-app:v1
+```
+
+### Verify the Tagged Image
+
+```bash
+docker images
+```
+
+---
+
+## 9.7. Pushing the Image to Docker Hub
+
+After tagging the image, I uploaded it to my Docker Hub repository.
+
+### Push Command
+
+```bash
+docker push shuayeb009/springer-demo-app:v1
+```
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/docker%20hub-push-ui.png)
+### Command Explanation
+
+| Command | Explanation |
+|---|---|
+| `docker push` | Uploads a Docker image to a registry. |
+| `shuayeb009` | Docker Hub username. |
+| `springer-demo-app` | Target repository. |
+| `v1` | Image version tag. |
+
+Docker uploaded the image layers to Docker Hub.
+
+After the push operation completed successfully, the image became available in my Docker Hub repository.
+
+---
+
+## 9.8. Verifying the Published Image
+
+Finally, I verified that the Docker image was successfully published to Docker Hub.
+
+### Pull the Published Image
+
+To verify that the image is available remotely, I can pull it from Docker Hub.
+
+```bash
+docker pull shuayeb009/springer-demo-app:v1
+```
+
+### Verify the Downloaded Image
+
+```bash
+docker images
+```
+
+### Run the Published Image
+
+```bash
+docker run -d \
+  --name springer-demo-test \
+  -p 8081:8080 \
+  shuayeb009/springer-demo-app:v1
+```
+
+Test the application:
+
+```bash
+curl http://localhost:8081/
+```
+
+Health check:
+
+```bash
+curl http://localhost:8081/health
+```
+
+Using port `8081` avoids conflicts if the original container is still running on port `8080`.
+
+### Docker Hub Repository
+
+Published Docker image:
+
+```text
+shuayeb009/springer-demo-app:v1
+```
+
+Repository URL:
+
+https://hub.docker.com/r/shuayeb009/springer-demo-app
+
+---
+
+## 9.9. Complete Docker Command Reference
+
+All the major commands used in this Docker workflow are listed below.
+
+| Step | Command | Purpose |
+|---|---|---|
+| 1 | `docker build -t springer-demo-app:v1 -f dockerfile .` | Build Docker image |
+| 2 | `docker images` | List Docker images |
+| 3 | `docker run -d --name springer-demo -p 8080:8080 springer-demo-app:v1` | Run container |
+| 4 | `docker ps` | Check running containers |
+| 5 | `docker logs springer-demo` | Check container logs |
+| 6 | `curl http://localhost:8080/` | Test application |
+| 7 | `docker login` | Authenticate with Docker Hub |
+| 8 | `docker tag springer-demo-app:v1 shuayeb009/springer-demo-app:v1` | Tag image |
+| 9 | `docker push shuayeb009/springer-demo-app:v1` | Push image |
+| 10 | `docker pull shuayeb009/springer-demo-app:v1` | Pull published image |
+
+---
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/docker%20login%2Cpush.png))
+
+### Final Docker Image
+
+```text
+shuayeb009/springer-demo-app:v1
+```
+
+## 9.10. Pushing the Docker Image to Docker Hub
+
+After authentication and tagging, I pushed the Docker image to Docker Hub.
+
+### Push Command
+
+```bash
+docker push shuayeb009/springer-demo-app:v1
+```
+
+### Command Explanation
+
+| Part | Meaning |
+|---|---|
+| `docker push` | Uploads a Docker image to a registry. |
+| `shuayeb009` | Docker Hub username. |
+| `springer-demo-app` | Docker Hub repository name. |
+| `v1` | Image version tag. |
+
+Docker uploads the image layers to Docker Hub.
+
+After successful execution, the image becomes available in the remote repository.
+
+---
+
+## 9.11. Verifying the Published Image
+
+After pushing the image, I verified its availability in Docker Hub.
+
+### Docker Hub Repository
+
+[View Springer Demo Docker Image](https://hub.docker.com/r/shuayeb009/springer-demo-app/tags)
+
+### Pull Command
+
+To verify that the published image is accessible from Docker Hub, I pulled it back to my local machine.
+
+```bash
+docker pull shuayeb009/springer-demo-app:v1
+```
+
+### Verify Local Images
+
+```bash
+docker image ls
+```
+
+This command lists locally available Docker images and confirms that the published image has been downloaded successfully.
+
+### Inspect Docker Image
+
+```bash
+docker image inspect springer-demo-app:v1
+```
+
+This command displays detailed information about the Docker image, including its configuration, image ID, architecture, and layers.
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/docker%20file%20%2Cimage%2Ccontainer%20%2Crun%2Ccheck%2Cstop.png)
+
+
+---
+
+## 9.12. Complete Docker Workflow
+
+![Image Alt Text]()
+---
+
+## 913. Important Docker Commands Summary
+
+| Command | Purpose |
+|---|---|
+| `docker version` | Checks Docker version. |
+| `docker info` | Displays Docker engine information. |
+| `docker build -t springer-demo-app:v1 -f dockerfile .` | Builds the Docker image. |
+| `docker images` | Lists local Docker images. |
+| `docker image ls` | Lists local Docker images. |
+| `docker run -d --name springer-demo -p 8080:8080 springer-demo-app:v1` | Creates and runs a container. |
+| `docker ps` | Lists running containers. |
+| `docker ps -a` | Lists all containers. |
+| `docker logs springer-demo` | Displays container logs. |
+| `docker login` | Authenticates with Docker Hub. |
+| `docker tag springer-demo-app:v1 shuayeb009/springer-demo-app:v1` | Tags the image for Docker Hub. |
+| `docker push shuayeb009/springer-demo-app:v1` | Pushes the image to Docker Hub. |
+| `docker pull shuayeb009/springer-demo-app:v1` | Downloads the published image. |
+| `docker image inspect springer-demo-app:v1` | Displays image configuration. |
+
+---
+
+
+### Final Docker Image
+
+```text
+shuayeb009/springer-demo-app:v1
+```
+
+### Docker Hub Repository
+
+https://hub.docker.com/r/shuayeb009/springer-demo-app/tags
+
+
