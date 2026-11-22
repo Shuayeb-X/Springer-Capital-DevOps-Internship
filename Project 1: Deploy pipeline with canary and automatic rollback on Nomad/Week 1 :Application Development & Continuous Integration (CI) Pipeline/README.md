@@ -1049,9 +1049,6 @@ After successful execution, the image becomes available in the remote repository
 
 After pushing the image, I verified its availability in Docker Hub.
 
-### Docker Hub Repository
-
-[View Springer Demo Docker Image](https://hub.docker.com/r/shuayeb009/springer-demo-app/tags)
 
 ### Pull Command
 
@@ -1355,11 +1352,12 @@ git push origin main
 
 Then, I went to the **Actions** tab of the GitHub repository and verified the workflow execution.
 
-During the first run, I encountered a `403 Forbidden` error due to GHCR permissions. Later, I granted the repository **Write** permission from GHCR Package Settings → Manage Actions access.
-
+### During the first run
 ![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/failed.png)
 
 ![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/failed%20log.png)
+
+I encountered a `403 Forbidden` error due to GHCR permissions. Later, I granted the repository **Write** permission from GHCR Package Settings → Manage Actions access.
 
 ### After that, the workflow executed successfully.
 ![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/workflow%20runs%20successfully.png)
