@@ -1,0 +1,3 @@
+16 November,2026
+
+Today, I worked on the Springer Capital assigned task, “Deploy Pipeline with Canary and Automatic Rollback on Nomad.” I developed and tested a Go demo application with a /health endpoint, created a multi-stage Dockerfile, and built and tested the Docker image locally. I successfully pushed the v1 image to Docker Hub and uploaded the project source code to GitHub. I also configured a separate Git repository and preserved the existing GitHub repository history. This work establishes the foundation for the next steps: GHCR publishing, GitHub Actions CI/CD automation, and Nomad canary deployment.
