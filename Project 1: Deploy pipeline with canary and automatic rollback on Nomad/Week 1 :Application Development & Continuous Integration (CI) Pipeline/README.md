@@ -484,7 +484,7 @@ curl http://localhost:8080/
   "status": "running"
 }
 ```
-
+![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/running-web.png)
 **Expected HTTP status:**
 
 ```text
@@ -498,6 +498,7 @@ curl http://localhost:8080/
 ```http
 GET /health
 ```
+![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/endpoint-terminal.png)
 
 **Purpose:**
 
@@ -508,7 +509,7 @@ Provides an HTTP health-check endpoint for monitoring application availability.
 ```bash
 curl http://localhost:8080/health
 ```
-
+![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/endpoint-web.png)
 **Expected response:**
 
 ```json
@@ -548,12 +549,13 @@ A request to an unregistered route should return:
 ```text
 404 Not Found
 ```
+![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/invalid-terminal.png)
 
 For example:
 
 ```bash
 curl http://localhost:8080/unknown
-```
+```![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/inavlid endpoint.png)
 
 ---
 
