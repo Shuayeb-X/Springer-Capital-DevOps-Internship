@@ -471,7 +471,7 @@ GET /
 Returns basic information about the running application.
 
 **Request:**
-
+![image alt]([https://github.com/Shuayeb-X/E-commerce-app-Go-Lang/blob/main/Pictures/List%20Products(postman).png](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/d0b79cc03ccc7bc9999665ed7dd9d9c57505c9ab/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/running-terminal.png))
 ```bash
 curl http://localhost:8080/
 ```
