@@ -1238,8 +1238,6 @@ I changed the package visibility to Public from GitHub Container Registry packag
 
 This allows Nomad and other Docker environments to pull the image without registry authentication.
 
-![Image Alt Text]()
-
 **GHCR Package:**
 
 [Springer Demo App - GHCR Package](https://github.com/users/shuayeb-x/packages/container/package/springer-demo-app)
