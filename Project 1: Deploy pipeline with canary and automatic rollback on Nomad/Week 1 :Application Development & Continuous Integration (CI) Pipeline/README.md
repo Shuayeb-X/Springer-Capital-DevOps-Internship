@@ -471,10 +471,12 @@ GET /
 Returns basic information about the running application.
 
 **Request:**
-![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/running-terminal.png)
+
 ```bash
 curl http://localhost:8080/
 ```
+![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/running-terminal.png)
+
 
 **Expected response:**
 
@@ -484,7 +486,8 @@ curl http://localhost:8080/
   "status": "running"
 }
 ```
-![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/running-web.png)
+![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/running-web.png)
+
 **Expected HTTP status:**
 
 ```text
@@ -498,7 +501,6 @@ curl http://localhost:8080/
 ```http
 GET /health
 ```
-![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/endpoint-terminal.png)
 
 **Purpose:**
 
@@ -509,7 +511,8 @@ Provides an HTTP health-check endpoint for monitoring application availability.
 ```bash
 curl http://localhost:8080/health
 ```
-![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/endpoint-web.png)
+![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/endpoint-terminal.png)
+
 **Expected response:**
 
 ```json
@@ -517,6 +520,10 @@ curl http://localhost:8080/health
   "status": "healthy"
 }
 ```
+```bash
+http://localhost:8080/health
+```
+![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/endpoint-web.png)
 
 **Expected HTTP status:**
 
@@ -549,13 +556,19 @@ A request to an unregistered route should return:
 ```text
 404 Not Found
 ```
-![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/invalid-terminal.png)
-
 For example:
 
 ```bash
 curl http://localhost:8080/unknown
-```![image alt](Project 1: Deploy pipeline with canary and automatic rollback on Nomad/Week 1 :Application Development & Continuous Integration (CI) Pipeline/docs/inavlid endpoint.png)
+```
+![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/invalid-terminal.png)
+
+
+```bash
+http://localhost:8080/unknown
+```
+
+![image alt](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/inavlid%20endpoint.png)
 
 ---
 
