@@ -1253,3 +1253,125 @@ This allows Nomad and other Docker environments to pull the image without regist
 | `docker push ghcr.io/shuayeb-x/springer-demo-app:v1` | Pushes the image to GHCR. |
 | `docker pull ghcr.io/shuayeb-x/springer-demo-app:v1` | Downloads the image from GHCR. |
 | `docker image inspect ghcr.io/shuayeb-x/springer-demo-app:v1` | Displays GHCR image configuration. |
+
+
+# 11 GitHub Actions Workflow
+
+First, I created a directory named `.github/workflows` in the project's root directory.
+
+```bash
+mkdir -p .github/workflows
+```
+
+Then, I created the workflow file:
+
+```bash
+nano .github/workflows/docker-publish.yml
+```
+
+I wrote the GitHub Actions workflow configuration in this file.
+
+### **Workflow Code**
+
+```yaml
+
+name: Build and Push Docker Image to GHCR
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run Go tests
+        run: go test -v ./...
+
+      - name: Run Go vet
+        run: go vet ./...
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dockerfile
+          push: true
+          tags: ghcr.io/shuayeb-x/springer-demo-app:v1
+
+```
+
+### **Workflow Code Explanation**
+
+| Configuration | Purpose |
+|---|---|
+| `name` | Defines the workflow name. |
+| `on: push` | Triggers the workflow when a Git push occurs. |
+| `branches: main` | Runs only when changes are pushed to the main branch. |
+| `permissions` | Provides repository read and package write permissions. |
+| `runs-on` | Uses an Ubuntu runner. |
+| `actions/checkout@v4` | Checks out the source code from the GitHub repository. |
+| `actions/setup-go@v5` | Sets up the Go environment. |
+| `go test -v ./...` | Runs automated Go tests. |
+| `go vet ./...` | Performs static analysis of the Go code. |
+| `docker/login-action@v3` | Logs in to GHCR. |
+| `GITHUB_TOKEN` | Used for GitHub Actions authentication. |
+| `docker/build-push-action@v6` | Builds and pushes the Docker image. |
+| `push: true` | Enables pushing the image to the registry. |
+| `tags` | Defines the GHCR image name and version. |
+
+### **How Did I Run the GitHub Actions Workflow?**
+
+After creating and saving the workflow file, I committed and pushed it to the Git repository.
+
+```bash
+git add .github/workflows/docker-publish.yml
+git commit -m "Add GitHub Actions workflow for GHCR publishing"
+git push origin main
+```
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/worklow-yaml.png)
+
+Then, I went to the **Actions** tab of the GitHub repository and verified the workflow execution.
+
+During the first run, I encountered a `403 Forbidden` error due to GHCR permissions. Later, I granted the repository **Write** permission from GHCR Package Settings → Manage Actions access.
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/failed.png)
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/failed%20log.png)
+
+### After that, the workflow executed successfully.
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/workflow%20runs%20successfully.png)
+
+
+### **Workflow Link**
+
+[GitHub Actions – Workflow Runs](https://github.com/Shuayeb-X/devops-intern-final/actions?utm_source=chatgpt.com)
+
+### Automated the trigger whenever any code push to the main branch
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/autmated%20success.png)
+
+**Final Result:** I automated the entire CI/CD pipeline using GitHub Actions. Whenever code is pushed to the `main` branch, GitHub Actions automatically runs Go tests, Go vet, builds the Docker image, authenticates with GHCR, and pushes the image to GitHub Container Registry without manual intervention.
+
