@@ -1077,14 +1077,12 @@ docker image inspect springer-demo-app:v1
 
 This command displays detailed information about the Docker image, including its configuration, image ID, architecture, and layers.
 
-![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/Go%20Application%20Containerization%20Workflow.png)
-
-
 ---
 
 ## 9.12. Complete Docker Workflow
 
-![Image Alt Text]()
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/Go%20Application%20Containerization%20Workflow.png)
+
 ---
 
 ## 913. Important Docker Commands Summary
