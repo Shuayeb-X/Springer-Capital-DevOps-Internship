@@ -111,23 +111,7 @@ Before implementation, it is important to understand how the components interact
 
 The application development and CI pipeline follow this architecture:
 
-```mermaid
-flowchart TD
-    A["Developer"] --> B["Go Application"]
-    B --> C["Git Repository"]
-    C --> D["Push to main"]
-    D --> E["GitHub Actions"]
-    E --> F["Checkout Source Code"]
-    F --> G["Setup Go Environment"]
-    G --> H["Run Unit Tests"]
-    H --> I["Run Go Vet"]
-    I --> J["Authenticate with GHCR"]
-    J --> K["Build Docker Image"]
-    K --> L["Push Image to GHCR"]
-    L --> M["Published Container Image"]
-
-    style M fill:#166534,color:#fff
-```
+![image alt] (https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Go%20CI_CD%20Pipeline%20Infographic.png)
 
 ### How the architecture works
 
