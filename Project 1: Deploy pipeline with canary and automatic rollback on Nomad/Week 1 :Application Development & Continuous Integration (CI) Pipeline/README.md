@@ -1118,3 +1118,140 @@ shuayeb009/springer-demo-app:v1
 https://hub.docker.com/r/shuayeb009/springer-demo-app/tags
 
 
+# 10 Publishing Docker Image to GitHub Container Registry (GHCR)
+
+## 10.1. GHCR Authentication
+
+First, I created a GitHub Personal Access Token (Classic) with the following permissions:
+
+- `write:packages`
+- `read:packages`
+
+Then, I authenticated with GitHub Container Registry using Docker.
+
+### Login Command
+
+```bash
+echo "$GHCR_TOKEN" | docker login ghcr.io -u Shuayeb-X --password-stdin
+```
+
+**Command Explanation:**
+
+| Part | Explanation |
+|---|---|
+| `docker login` | Authenticates with a container registry. |
+| `ghcr.io` | GitHub Container Registry address. |
+| `-u Shuayeb-X` | GitHub username. |
+| `--password-stdin` | Reads the access token securely from standard input. |
+
+**Expected Output:**
+
+```text
+Login Succeeded
+```
+
+## 10.2. Building the Docker Image
+
+I built the Springer Demo application image using the Dockerfile.
+
+```bash
+docker build -t springer-demo-app:v1 -f dockerfile .
+```
+
+**Explanation:**
+
+- `docker build`: Builds a Docker image.
+- `-t`: Assigns an image name and tag.
+- `springer-demo-app:v1`: Local image name and version.
+- `-f dockerfile`: Specifies the Dockerfile.
+- `.`: Uses the current directory as the build context.
+
+## 10.3. Tagging the Image for GHCR
+
+After building the image, I tagged it with the GHCR repository name.
+
+```bash
+docker tag springer-demo-app:v1 ghcr.io/shuayeb-x/springer-demo-app:v1
+```
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/GHCR%20login%20and%20push-2.png)
+
+**Explanation:**
+
+The GHCR image naming format is:
+
+```text
+ghcr.io/USERNAME/IMAGE_NAME:TAG
+```
+
+- `ghcr.io`: Registry address.
+- `shuayeb-x`: GitHub username in lowercase.
+- `springer-demo-app`: Image repository name.
+- `v1`: Image version.
+
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/GHCR%20login%20and%20push-1.png)
+
+
+## 10.4. Pushing the Image to GHCR
+
+After authentication and tagging, I pushed the image to GitHub Container Registry.
+
+```bash
+docker push ghcr.io/shuayeb-x/springer-demo-app:v1
+```
+![Image Alt Text](https://github.com/Shuayeb-X/Springer-Capital-DevOps-Internship/blob/main/Project%201%3A%20Deploy%20pipeline%20with%20canary%20and%20automatic%20rollback%20on%20Nomad/Week%201%20%3AApplication%20Development%20%26%20Continuous%20Integration%20(CI)%20Pipeline/docs/Day%202/GHCR%20login%20and%20push-2.png)
+
+Docker uploaded the image layers to GHCR.
+
+**Published Image:**
+
+```text
+ghcr.io/shuayeb-x/springer-demo-app:v1
+```
+
+## 10.5. Pulling and Verifying the Image
+
+I verified the published image by pulling it from GHCR.
+
+```bash
+docker pull ghcr.io/shuayeb-x/springer-demo-app:v1
+```
+
+Then, I inspected the image:
+
+```bash
+docker image inspect ghcr.io/shuayeb-x/springer-demo-app:v1
+```
+
+I verified the following properties:
+
+- Image ID
+- Repository tags
+- Architecture (`amd64`)
+- Operating system (`linux`)
+- Exposed port (`8080/tcp`)
+- Working directory (`/app`)
+- Startup command (`./exe_binary`)
+
+## 10.6. Making the GHCR Package Public
+
+I changed the package visibility to Public from GitHub Container Registry package settings.
+
+This allows Nomad and other Docker environments to pull the image without registry authentication.
+
+![Image Alt Text]()
+
+**GHCR Package:**
+
+[Springer Demo App - GHCR Package](https://github.com/users/shuayeb-x/packages/container/package/springer-demo-app)
+
+
+## 10.7 GHCR Publishing Commands
+
+| Command | Purpose |
+|---|---|
+| `echo "$GHCR_TOKEN" \| docker login ghcr.io -u Shuayeb-X --password-stdin` | Authenticates with GitHub Container Registry. |
+| `docker build -t springer-demo-app:v1 -f dockerfile .` | Builds the Docker image. |
+| `docker tag springer-demo-app:v1 ghcr.io/shuayeb-x/springer-demo-app:v1` | Tags the image for GHCR. |
+| `docker push ghcr.io/shuayeb-x/springer-demo-app:v1` | Pushes the image to GHCR. |
+| `docker pull ghcr.io/shuayeb-x/springer-demo-app:v1` | Downloads the image from GHCR. |
+| `docker image inspect ghcr.io/shuayeb-x/springer-demo-app:v1` | Displays GHCR image configuration. |
