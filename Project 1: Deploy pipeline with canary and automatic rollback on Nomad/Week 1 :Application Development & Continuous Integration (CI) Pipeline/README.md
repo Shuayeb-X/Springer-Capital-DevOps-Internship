@@ -1,12 +1,6 @@
 
 ## Week 1: Application Development & Continuous Integration (CI) Pipeline
 
-\
-\
-\
-\
-\
-
 
 **Project:** Deploy Pipeline with Canary and Automatic Rollback on Nomad\
 **Organization:** Springer Capital\
