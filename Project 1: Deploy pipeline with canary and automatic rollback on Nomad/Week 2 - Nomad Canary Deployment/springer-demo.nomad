@@ -6,6 +6,15 @@ job "springer-demo" {
   group "springer-demo-group" {
     count = 1
 
+    update {
+      max_parallel      = 1
+      min_healthy_time  = "10s"
+      healthy_deadline  = "5m"
+      progress_deadline = "10m"
+      canary = 1
+      auto_revert = true
+    }
+
     network {
       port "http" {
         static = 8080
